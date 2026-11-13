@@ -1,0 +1,4 @@
+# Count the Power BI semantic model (TMDL) in GitHub's language stats; it's the main deliverable.
+*.tmdl linguist-detectable
+# The PBIP generator is build tooling, not the analysis itself.
+powerbi/generate_pbip.py linguist-detectable=false
