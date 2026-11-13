@@ -1,4 +1,4 @@
-# Forecast vs Actual: grading driver-based forecasts on 15 public companies
+# Power BI: Forecast vs Actual. Grading driver-based forecasts on 15 public companies
 
 **If an FP&A analyst had forecast these companies at the start of each year, using only what was known then, how close would they have been, and what explains the misses?**
 
