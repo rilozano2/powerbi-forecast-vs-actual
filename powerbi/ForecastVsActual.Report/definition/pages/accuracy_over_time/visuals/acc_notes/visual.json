@@ -1,0 +1,147 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "acc_notes",
+  "position": {
+    "x": 924,
+    "y": 100,
+    "z": 4000,
+    "height": 600,
+    "width": 332,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "The big misses",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "NVIDIA FY2024: ",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "the AI data center boom. Revenue came in about 92% above a forecast built on the prior trend.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "NRG 2021: ",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "the Direct Energy acquisition closed in January 2021.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Robinhood 2023: ",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "the forecast extrapolated the 2022 slump, then higher rates lifted interest income.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Schwab 2021: ",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "the first full year after buying TD Ameritrade.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "AMD 2023: ",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": "the PC downturn.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "The lesson: a trend-based driver model is a strong baseline for steady businesses, and needs judgment overlays for M&A, rate regimes and product cycles.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

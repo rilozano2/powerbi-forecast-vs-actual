@@ -1,0 +1,16 @@
+Ticker,CIK,Company,PeerGroup,HasGrossMargin
+WMT,104169,Walmart,Retail,True
+COST,909832,Costco,Retail,True
+TGT,27419,Target,Retail,False
+AMZN,1018724,Amazon,Mega-cap tech,True
+GOOGL,1652044,Alphabet,Mega-cap tech,True
+META,1326801,Meta Platforms,Mega-cap tech,True
+MSFT,789019,Microsoft,Mega-cap tech,True
+NVDA,1045810,NVIDIA,AI semiconductors,True
+AMD,2488,Advanced Micro Devices,AI semiconductors,True
+CEG,1868275,Constellation Energy,Power & nuclear,False
+VST,1692819,Vistra,Power & nuclear,False
+NRG,1013871,NRG Energy,Power & nuclear,False
+SCHW,316709,Charles Schwab,Brokers & fintech,False
+HOOD,1783879,Robinhood,Brokers & fintech,False
+SOFI,1818874,SoFi Technologies,Brokers & fintech,False

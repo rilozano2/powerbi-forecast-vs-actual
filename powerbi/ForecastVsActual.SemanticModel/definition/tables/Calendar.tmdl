@@ -1,0 +1,66 @@
+table Calendar
+	lineageTag: 25ff8776-8b9c-5199-bb0d-63c01fbbc125
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: f8290943-853f-5d42-903f-734d5c07a684
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 5451e1b6-c89a-5783-b0b2-dda852162728
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNumber
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d647cb93-81dd-52af-94dc-efe7ceb1fc29
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MonthNumber]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: string
+		lineageTag: 00d1b6d4-1579-5d17-ac0f-ff123b18b1d6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: MonthNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarQuarter
+		dataType: string
+		lineageTag: 0058ce4b-8684-57a1-98e6-1b37714468d7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [CalendarQuarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar = calculated
+		mode: import
+		source =
+				ADDCOLUMNS (
+				    CALENDAR ( DATE ( 2014, 1, 1 ), DATE ( 2028, 12, 31 ) ),
+				    "Year", YEAR ( [Date] ),
+				    "MonthNumber", MONTH ( [Date] ),
+				    "Month", FORMAT ( [Date], "MMM" ),
+				    "CalendarQuarter", "Q" & QUARTER ( [Date] )
+				)
+

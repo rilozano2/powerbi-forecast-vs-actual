@@ -1,0 +1,6 @@
+/// Folder holding the pipeline CSVs. Change it under Transform data > Manage parameters.
+expression DataFolder = "\\Mac\Home\forecast-vs-actual\data\processed\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 4ea5d852-32c5-5278-a7d2-8aee67c56df4
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,404 @@
+table _Measures
+	lineageTag: 4a745ce5-ac71-552f-a96b-f465e9e8a734
+
+	/// Reported revenue.
+	measure 'Revenue Actual' = SUM ( FactActuals[Revenue] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: b0cfd34b-0fe9-58df-a0a4-52ef73a7690e
+
+	measure 'Gross Profit Actual' = SUM ( FactActuals[GrossProfit] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: f64163d3-57f3-5c98-9aa5-13f3b5601bd7
+
+	/// Implied operating expenses: gross profit (or revenue) minus operating income.
+	measure 'Opex Actual' = SUM ( FactActuals[OperatingExpenses] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: 42fadd89-3737-54aa-8250-659bb8c6fee2
+
+	measure 'Operating Income Actual' = SUM ( FactActuals[OperatingIncome] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: a7d9890d-1ca2-5bf2-abba-0d9ebb4bd21e
+
+	measure 'Net Income Actual' = SUM ( FactActuals[NetIncome] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: ac7bfa34-5629-5c9d-88a9-a94f2fa60d95
+
+	measure 'Operating Margin (reported)' = DIVIDE ( [Operating Income Actual], [Revenue Actual] )
+		formatString: 0.0%
+		displayFolder: Actuals
+		lineageTag: c444445f-299f-50ae-896e-c2aa18960798
+
+	/// Same fiscal quarters one fiscal year earlier. Shifts by fiscal year instead of SAMEPERIODLASTYEAR because every company's quarters end on different dates.
+	measure 'Revenue PY' =
+			VAR yrs = SELECTCOLUMNS ( VALUES ( DimPeriod[FiscalYear] ), "y", DimPeriod[FiscalYear] - 1 )
+			VAR qs = VALUES ( DimPeriod[FiscalQuarter] )
+			RETURN
+			    CALCULATE ( [Revenue Actual], REMOVEFILTERS ( DimPeriod ), TREATAS ( yrs, DimPeriod[FiscalYear] ), qs )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: 79ce7184-2dc3-5a22-9b77-fa6c32a632bf
+
+	measure 'Revenue YoY %' = DIVIDE ( [Revenue Actual] - [Revenue PY], [Revenue PY] )
+		formatString: 0.0%
+		displayFolder: Actuals
+		lineageTag: 5128780c-4c60-5571-afd2-796f34186b74
+
+	/// Trailing twelve months of revenue ending at the latest quarter in context.
+	measure 'Revenue TTM' =
+			VAR e = MAX ( DimPeriod[PeriodEnd] )
+			RETURN
+			    CALCULATE ( [Revenue Actual], REMOVEFILTERS ( DimPeriod ), DATESINPERIOD ( 'Calendar'[Date], e, -12, MONTH ) )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Actuals
+		lineageTag: 80db7791-4225-586d-9669-3753e3364e5c
+
+	/// Forecast made at the start of each fiscal year using only data available then.
+	measure 'Revenue Forecast' = SUM ( FactForecast[Revenue] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Forecast
+		lineageTag: dc713045-1940-54f8-a977-236cdf1d7844
+
+	measure 'Gross Profit Forecast' = SUM ( FactForecast[GrossProfit] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Forecast
+		lineageTag: ac51b538-7b73-5acf-bd61-be1812a47f20
+
+	measure 'Opex Forecast' = SUM ( FactForecast[OperatingExpenses] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Forecast
+		lineageTag: a3362691-4a93-5e7a-a89b-f2d8ca4322dc
+
+	measure 'Operating Income Forecast' = SUM ( FactForecast[OperatingIncome] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Forecast
+		lineageTag: 14dfb4c6-a5ee-5bf9-b84a-c94910a26ee1
+
+	measure 'Net Income Forecast' = SUM ( FactForecast[NetIncome] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Forecast
+		lineageTag: c88044fd-3c3a-5304-b3b4-f3dc0e919112
+
+	/// Quarters with both a forecast and an actual. Variances only count these, so unreported quarters don't show up as misses.
+	measure 'Comparable Quarters' =
+			COUNTROWS (
+			    FILTER ( DimPeriod, NOT ISBLANK ( [Revenue Forecast] ) && NOT ISBLANK ( [Revenue Actual] ) )
+			)
+		formatString: #,0
+		displayFolder: Comparable
+		lineageTag: 7b8aec00-c260-5d57-8523-c89e37b354fb
+
+	measure 'Revenue Act (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Revenue Forecast] ) ), [Revenue Actual] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 363f0475-0e23-5732-ae35-9c1a3a0d1d81
+
+	measure 'Revenue Fcst (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Revenue Actual] ) ), [Revenue Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 593a08fd-40d8-59d1-a5b5-5e2ae6575f01
+
+	measure 'Gross Profit Act (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Gross Profit Forecast] ) ), [Gross Profit Actual] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 9523af90-c7c6-5229-aef2-624e782edea4
+
+	measure 'Gross Profit Fcst (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Gross Profit Actual] ) ), [Gross Profit Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 9ccdb82a-a626-5837-9a74-c5d2795258a3
+
+	measure 'Opex Act (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Opex Forecast] ) ), [Opex Actual] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: ab0cdefc-98eb-51a5-96ea-b61f85ede316
+
+	measure 'Opex Fcst (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Opex Actual] ) ), [Opex Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 3fc867b7-7fb0-55b6-b094-3522a255de97
+
+	measure 'Operating Income Act (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Operating Income Forecast] ) ), [Operating Income Actual] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 842ff815-f403-5b43-bacd-56453f866437
+
+	measure 'Operating Income Fcst (c)' = SUMX ( FILTER ( DimPeriod, NOT ISBLANK ( [Operating Income Actual] ) ), [Operating Income Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Comparable
+		lineageTag: 75fe5859-3007-560e-be0d-9e9dba3329e4
+
+	/// Actual minus forecast. Positive is favorable for revenue.
+	measure 'Revenue Variance' = [Revenue Act (c)] - [Revenue Fcst (c)]
+		formatString: $#,0,,,.00"B"
+		displayFolder: Variance
+		lineageTag: 26b106cb-96f4-5acd-9aa6-fcbb52502c5b
+
+	measure 'Revenue Variance %' = DIVIDE ( [Revenue Variance], [Revenue Fcst (c)] )
+		formatString: 0.0%
+		displayFolder: Variance
+		lineageTag: 336b2083-d4e9-5189-a950-667c62a50ad1
+
+	/// Only for a single company-year with all four quarters reported.
+	measure 'Revenue Variance % (full years)' = IF ( [Comparable Quarters] = 4, [Revenue Variance %] )
+		formatString: 0.0%
+		displayFolder: Variance
+		lineageTag: c2bc0672-39bc-59ea-acc8-d4afa7648fb6
+
+	measure 'Operating Income Variance' = [Operating Income Act (c)] - [Operating Income Fcst (c)]
+		formatString: $#,0,,,.00"B"
+		displayFolder: Variance
+		lineageTag: 4b9d1ea5-6cd0-5519-8fe4-0b696b499e17
+
+	measure 'Operating Income Variance %' = DIVIDE ( [Operating Income Variance], ABS ( [Operating Income Fcst (c)] ) )
+		formatString: 0.0%
+		displayFolder: Variance
+		lineageTag: df032fbb-3a6d-57b4-8857-3cf526df9057
+
+	measure 'Revenue Variance Flag' = IF ( NOT ISBLANK ( [Revenue Variance] ), IF ( [Revenue Variance] >= 0, "Favorable", "Unfavorable" ) )
+		displayFolder: Variance
+		lineageTag: e84da434-2890-536c-8859-cb6c7da5be9c
+
+	/// Spending less than forecast is favorable.
+	measure 'Opex Variance Flag' = IF ( NOT ISBLANK ( [Opex Act (c)] ), IF ( [Opex Act (c)] <= [Opex Fcst (c)], "Favorable", "Unfavorable" ) )
+		displayFolder: Variance
+		lineageTag: 76d66f7e-94ce-5cc6-9509-41c9a7ea1f25
+
+	measure 'Operating Margin Actual' = DIVIDE ( [Operating Income Act (c)], [Revenue Act (c)] )
+		formatString: 0.0%
+		displayFolder: Margins
+		lineageTag: d004ecc4-093a-5651-9b50-40b9352d000e
+
+	measure 'Operating Margin Forecast' = DIVIDE ( [Operating Income Fcst (c)], [Revenue Fcst (c)] )
+		formatString: 0.0%
+		displayFolder: Margins
+		lineageTag: 002b6b6e-f31f-5f60-97d7-ab8f029cc9e8
+
+	measure 'Gross Margin Actual' = DIVIDE ( [Gross Profit Act (c)], [Revenue Act (c)] )
+		formatString: 0.0%
+		displayFolder: Margins
+		lineageTag: 729a22e8-6ec5-52b9-a5af-60c3aa1dfc6a
+
+	measure 'Gross Margin Forecast' = DIVIDE ( [Gross Profit Fcst (c)], [Revenue Fcst (c)] )
+		formatString: 0.0%
+		displayFolder: Margins
+		lineageTag: b14bbfc4-63e9-59e7-bb40-ce8105400342
+
+	/// Operating income gained or lost from selling more or less than forecast, at the forecast margin.
+	measure 'Bridge Revenue Effect' = [Revenue Variance] * [Operating Margin Forecast]
+		formatString: $#,0,,,.00"B"
+		displayFolder: Bridge
+		lineageTag: 3cb73921-2b06-5607-978c-0289ad579dc8
+
+	/// Operating income gained or lost from a different operating margin, on actual revenue.
+	measure 'Bridge Margin Effect' = [Revenue Act (c)] * ( [Operating Margin Actual] - [Operating Margin Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Bridge
+		lineageTag: efc78522-2b3e-59b4-be3a-9d1cced428d2
+
+	measure 'Bridge Gross Margin Effect' = [Revenue Act (c)] * ( [Gross Margin Actual] - [Gross Margin Forecast] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Bridge
+		lineageTag: 349a3ae4-307e-5fb1-83d2-de382c6b2a20
+
+	/// Negative when opex ran higher than forecast as a share of revenue.
+	measure 'Bridge Opex Effect' =
+			-1 * [Revenue Act (c)]
+			    * ( DIVIDE ( [Opex Act (c)], [Revenue Act (c)] ) - DIVIDE ( [Opex Fcst (c)], [Revenue Fcst (c)] ) )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Bridge
+		lineageTag: 4974fb0a-371c-5516-862d-b388fdb383e6
+
+	measure 'Has Gross Margin (all selected)' = ISEMPTY ( FILTER ( DimCompany, NOT DimCompany[HasGrossMargin] ) )
+		displayFolder: Bridge
+		lineageTag: 6ee88af4-4522-5bd8-a942-675904d7ffe9
+
+	/// Feeds the waterfall. The steps add up exactly to actual operating income.
+	measure 'Bridge Value' =
+			VAR gm = [Has Gross Margin (all selected)]
+			RETURN
+			    SWITCH (
+			        SELECTEDVALUE ( BridgeSteps[Step] ),
+			        "Forecast operating income", [Operating Income Fcst (c)],
+			        "Revenue effect", [Bridge Revenue Effect],
+			        "Gross margin effect", IF ( gm, [Bridge Gross Margin Effect] ),
+			        "Opex effect", IF ( gm, [Bridge Opex Effect] ),
+			        "Operating margin effect", IF ( NOT gm, [Bridge Margin Effect] )
+			    )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Bridge
+		lineageTag: d45bf0b1-2688-5f36-9bf5-48bbf0aa637f
+
+	measure 'Revenue Abs % Error' = ABS ( [Revenue Variance %] )
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: fbde140f-27b8-5463-9334-50e08bc4549c
+
+	/// Average absolute full-year revenue miss, each company-year counted once.
+	measure 'Revenue MAPE (company-years)' =
+			AVERAGEX (
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4
+			    ),
+			    [Revenue Abs % Error]
+			)
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: 30f8e57c-335f-5db4-b2ab-05a017684332
+
+	measure 'Share Within 5%' =
+			VAR years =
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4
+			    )
+			RETURN
+			    DIVIDE ( COUNTROWS ( FILTER ( years, [Revenue Abs % Error] <= 0.05 ) ), COUNTROWS ( years ) )
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: f1feb6a2-0c53-5551-8cad-b0c25dc811f9
+
+	measure 'Company-Years Scored' =
+			COUNTROWS (
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4
+			    )
+			)
+		formatString: #,0
+		displayFolder: Accuracy
+		lineageTag: 36faca53-cb9c-5c87-b9cb-82dfb2d4de95
+
+	/// Average signed miss. Positive means actual revenue tended to beat the forecast (the forecast was conservative).
+	measure 'Revenue Bias (company-years)' =
+			AVERAGEX (
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4
+			    ),
+			    [Revenue Variance %]
+			)
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: 478e486f-fe4b-50d4-a2eb-9bd239e1f8a2
+
+	/// Benchmark forecast: the same quarters' revenue one year earlier (no growth).
+	measure 'Naive Fcst (c)' =
+			SUMX (
+			    FILTER ( DimPeriod, NOT ISBLANK ( [Revenue Forecast] ) && NOT ISBLANK ( [Revenue Actual] ) ),
+			    VAR t = DimPeriod[Ticker]
+			    RETURN CALCULATE ( [Revenue PY], DimCompany[Ticker] = t )
+			)
+		formatString: $#,0,,,.00"B"
+		displayFolder: Accuracy
+		lineageTag: 9e9263bb-4864-5702-b8bc-3159bbe0a69b
+
+	measure 'Naive Abs % Error' = ABS ( DIVIDE ( [Revenue Act (c)] - [Naive Fcst (c)], [Naive Fcst (c)] ) )
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: 3951d3ee-1805-5b8c-81e1-27c76384c013
+
+	/// Average miss of the same-as-last-year benchmark, on the same company-years as the model.
+	measure 'Revenue MAPE (naive)' =
+			AVERAGEX (
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4 && NOT ISBLANK ( [Naive Fcst (c)] )
+			    ),
+			    [Naive Abs % Error]
+			)
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: 1a460568-d735-5bc6-acf0-a020d7f368cb
+
+	/// Share of company-years where the driver model was closer than the naive benchmark.
+	measure 'Beats Naive Share' =
+			VAR years =
+			    FILTER (
+			        CROSSJOIN ( VALUES ( DimCompany[Ticker] ), VALUES ( DimPeriod[FiscalYear] ) ),
+			        [Comparable Quarters] = 4 && NOT ISBLANK ( [Naive Fcst (c)] )
+			    )
+			RETURN
+			    DIVIDE ( COUNTROWS ( FILTER ( years, [Revenue Abs % Error] < [Naive Abs % Error] ) ), COUNTROWS ( years ) )
+		formatString: 0.0%
+		displayFolder: Accuracy
+		lineageTag: 90206980-6d23-50c3-89c5-9a39124593b3
+
+	/// Growth rate the forecast assumed for the fiscal year in context.
+	measure 'Assumed Revenue Growth' = CALCULATE ( AVERAGE ( FactDrivers[RevenueGrowth] ), TREATAS ( VALUES ( DimPeriod[FiscalYear] ), FactDrivers[Vintage] ) )
+		formatString: 0.0%
+		displayFolder: Drivers
+		lineageTag: 8d47afb7-dc33-5f19-9dad-b299572fef6c
+
+	measure 'Assumed Operating Margin' = CALCULATE ( AVERAGE ( FactDrivers[OperatingMargin] ), TREATAS ( VALUES ( DimPeriod[FiscalYear] ), FactDrivers[Vintage] ) )
+		formatString: 0.0%
+		displayFolder: Drivers
+		lineageTag: 4b109c83-09ae-539a-9bb8-7910c12f1be8
+
+	/// The current fiscal year's forecast before any slider adjustments.
+	measure 'Revenue Base (latest)' = SUMX ( FILTER ( FactForecast, FactForecast[Is Latest Vintage Row] ), FactForecast[Revenue] )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Scenario
+		lineageTag: a3698d72-ef1c-527c-b7aa-7610dcafcc8a
+
+	/// Current-year forecast with the growth slider applied.
+	measure 'Revenue Scenario' =
+			SUMX (
+			    FILTER ( FactForecast, FactForecast[Is Latest Vintage Row] ),
+			    FactForecast[BaseRevenue] * ( 1 + FactForecast[RevenueGrowth] + [Growth Adjustment Value] )
+			)
+		formatString: $#,0,,,.00"B"
+		displayFolder: Scenario
+		lineageTag: 2471519f-ef47-5c14-ac9b-c957a537cbd1
+
+	measure 'Operating Income Scenario' =
+			SUMX (
+			    FILTER ( FactForecast, FactForecast[Is Latest Vintage Row] ),
+			    FactForecast[BaseRevenue] * ( 1 + FactForecast[RevenueGrowth] + [Growth Adjustment Value] )
+			        * ( FactForecast[OperatingMargin] + [Margin Adjustment Value] )
+			)
+		formatString: $#,0,,,.00"B"
+		displayFolder: Scenario
+		lineageTag: 937800bd-83db-58b4-9522-2ebe88233de7
+
+	/// Reported revenue, limited to the quarters of the current forecast year.
+	measure 'Revenue Actual (current year)' =
+			VAR keys =
+			    SELECTCOLUMNS ( FILTER ( FactForecast, FactForecast[Is Latest Vintage Row] ), "k", FactForecast[PeriodKey] )
+			RETURN
+			    CALCULATE ( [Revenue Actual], TREATAS ( keys, FactActuals[PeriodKey] ) )
+		formatString: $#,0,,,.00"B"
+		displayFolder: Scenario
+		lineageTag: 43f88548-73ec-5dea-9b3d-7d0032ffab1e
+
+	/// Reported quarters at actual, the rest of the year at the scenario.
+	measure 'Revenue Outlook' =
+			SUMX (
+			    FILTER ( FactForecast, FactForecast[Is Latest Vintage Row] ),
+			    VAR k = FactForecast[PeriodKey]
+			    VAR scenario = FactForecast[BaseRevenue] * ( 1 + FactForecast[RevenueGrowth] + [Growth Adjustment Value] )
+			    RETURN
+			        IF ( RELATED ( DimPeriod[IsReported] ), CALCULATE ( SUM ( FactActuals[Revenue] ), FactActuals[PeriodKey] = k ), scenario )
+			)
+		formatString: $#,0,,,.00"B"
+		displayFolder: Scenario
+		lineageTag: 20ce6b38-cfde-5c85-a8fe-6b476724152c
+
+	column Placeholder
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8099eaa0-1094-5427-bd50-a263bcbf2540
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Placeholder]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW ( "Placeholder", 0 )
+

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json",
+  "pageOrder": [
+    "summary",
+    "forecast_vs_actual",
+    "variance_bridge",
+    "accuracy_over_time",
+    "peer_benchmarking",
+    "scenario_planner"
+  ],
+  "activePageName": "peer_benchmarking"
+}

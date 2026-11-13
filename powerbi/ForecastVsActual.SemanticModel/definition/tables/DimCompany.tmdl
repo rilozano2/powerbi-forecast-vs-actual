@@ -1,0 +1,59 @@
+table DimCompany
+	lineageTag: 2dd5066e-6c08-5a91-8a37-bd56a6dcfc12
+
+	column Ticker
+		dataType: string
+		lineageTag: 106e89a8-c35f-57d6-8d6c-bee43954d08d
+		summarizeBy: none
+		sourceColumn: Ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column CIK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 11c46edf-3015-54dd-bf6f-58d445ff4013
+		summarizeBy: none
+		sourceColumn: CIK
+
+		annotation SummarizationSetBy = Automatic
+
+	column Company
+		dataType: string
+		lineageTag: 73706c9b-0fcd-58bf-90a7-e8817c0af7f0
+		summarizeBy: none
+		sourceColumn: Company
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeerGroup
+		dataType: string
+		lineageTag: 0e206c25-82ba-593b-a1ee-ffb5a7f89e4f
+		summarizeBy: none
+		sourceColumn: PeerGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column HasGrossMargin
+		dataType: boolean
+		lineageTag: 4f55fdf6-8130-5039-b001-2ad13eae98f4
+		summarizeBy: none
+		sourceColumn: HasGrossMargin
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimCompany = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_company.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // Empty CSV cells (no gross margin, unreported quarters) become nulls before typing.
+				    Blanks = Table.TransformColumns(#"Promoted Headers", {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"Ticker", type text}, {"CIK", Int64.Type}, {"Company", type text}, {"PeerGroup", type text}, {"HasGrossMargin", type logical}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,147 @@
+table FactActuals
+	lineageTag: 4c74130b-2aeb-5dc1-9a26-5d29dfc9bd5e
+
+	column Ticker
+		dataType: string
+		isHidden
+		lineageTag: 1470e66e-0264-5ed5-a9b8-4a3f257601e1
+		summarizeBy: none
+		sourceColumn: Ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodKey
+		dataType: string
+		isHidden
+		lineageTag: a4794031-4fab-59f6-a008-3c27cc703b86
+		summarizeBy: none
+		sourceColumn: PeriodKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e362a85e-83d8-5419-bd12-14fbd1f564f8
+		summarizeBy: none
+		sourceColumn: FiscalYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarter
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a3ba5218-a8f1-5f0b-aa6c-c4b2f856db1c
+		summarizeBy: none
+		sourceColumn: FiscalQuarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodStart
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 345a323b-7c95-510a-988d-a8c11097940a
+		summarizeBy: none
+		sourceColumn: PeriodStart
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column PeriodEnd
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: ffc83708-3a5c-5b81-bf5d-087e507a297f
+		summarizeBy: none
+		sourceColumn: PeriodEnd
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Revenue
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: 65e49e23-97b4-5ae8-bc38-2cbe5a424efd
+		summarizeBy: sum
+		sourceColumn: Revenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostOfRevenue
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: 67eeaebf-5919-5af2-9791-29ed9bea6d1e
+		summarizeBy: sum
+		sourceColumn: CostOfRevenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column GrossProfit
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: 3fbb69fd-c72d-557a-81d4-085386e72c20
+		summarizeBy: sum
+		sourceColumn: GrossProfit
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingExpenses
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: e6e6bdb0-a66e-551c-9281-71b4a7ee53a7
+		summarizeBy: sum
+		sourceColumn: OperatingExpenses
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingIncome
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: d9e10366-9acb-5ed8-a8fa-29b23c187234
+		summarizeBy: sum
+		sourceColumn: OperatingIncome
+
+		annotation SummarizationSetBy = Automatic
+
+	column NetIncome
+		dataType: double
+		isHidden
+		formatString: $#,0,,,.00"B"
+		lineageTag: 80eb9672-7577-5427-ad15-db37f8063443
+		summarizeBy: sum
+		sourceColumn: NetIncome
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingIncomeIsPreTax
+		dataType: boolean
+		lineageTag: acce008e-213e-5c4b-9faf-44b003d9592c
+		summarizeBy: none
+		sourceColumn: OperatingIncomeIsPreTax
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactActuals = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "fact_actuals.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // Empty CSV cells (no gross margin, unreported quarters) become nulls before typing.
+				    Blanks = Table.TransformColumns(#"Promoted Headers", {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"Ticker", type text}, {"PeriodKey", type text}, {"FiscalYear", Int64.Type}, {"FiscalQuarter", Int64.Type}, {"PeriodStart", type date}, {"PeriodEnd", type date}, {"Revenue", type number}, {"CostOfRevenue", type number}, {"GrossProfit", type number}, {"OperatingExpenses", type number}, {"OperatingIncome", type number}, {"NetIncome", type number}, {"OperatingIncomeIsPreTax", type logical}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,28 @@
+/// What-if parameter: percentage points added to the forecast revenue growth rate.
+table 'Growth Adjustment'
+	lineageTag: 5a659831-4476-5970-b96a-2dc2e53a137f
+
+	measure 'Growth Adjustment Value' = DIVIDE ( SELECTEDVALUE ( 'Growth Adjustment'[Growth Adjustment (pts)], 0 ), 100 )
+		formatString: 0.0%
+		lineageTag: 40fe0c4f-da54-5374-a33c-1d10b3a1df98
+
+	column 'Growth Adjustment (pts)'
+		dataType: double
+		formatString: 0.0
+		lineageTag: b58d4c8b-c267-556e-b69e-d04d16b9a553
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Growth Adjustment' = calculated
+		mode: import
+		source = GENERATESERIES ( -20.0, 20.0, 1.0 )
+
+	annotation PBI_Id = 39879906bcb75d76bf9a634906379490
+

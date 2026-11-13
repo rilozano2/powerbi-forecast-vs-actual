@@ -1,0 +1,40 @@
+/// Categories for the variance waterfall.
+table BridgeSteps
+	lineageTag: 0f9a9da6-0fd5-57ec-a3a5-dd2a2b11a766
+
+	column Step
+		dataType: string
+		lineageTag: 54015a1d-ceae-5db9-8727-794058828657
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Step]
+		sortByColumn: Order
+
+		annotation SummarizationSetBy = Automatic
+
+	column Order
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 14135a3a-a4f2-550c-a967-5e97b587c2b5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition BridgeSteps = calculated
+		mode: import
+		source =
+				DATATABLE (
+				    "Step", STRING,
+				    "Order", INTEGER,
+				    {
+				        { "Forecast operating income", 1 },
+				        { "Revenue effect", 2 },
+				        { "Gross margin effect", 3 },
+				        { "Opex effect", 4 },
+				        { "Operating margin effect", 5 }
+				    }
+				)
+

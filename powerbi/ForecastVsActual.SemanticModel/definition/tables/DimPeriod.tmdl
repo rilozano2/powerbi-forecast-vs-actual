@@ -1,0 +1,103 @@
+table DimPeriod
+	lineageTag: 15f201c9-0f3a-522b-b12d-8addd556eb2e
+
+	column PeriodKey
+		dataType: string
+		isHidden
+		lineageTag: c007995d-59c4-57e9-85f8-ae4dae0e7ec2
+		summarizeBy: none
+		sourceColumn: PeriodKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ticker
+		dataType: string
+		isHidden
+		lineageTag: cd5f4e3c-964f-5224-95bd-1e386c0ccbf7
+		summarizeBy: none
+		sourceColumn: Ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 6cf75c2d-fc36-523d-9615-7d078bc9987d
+		summarizeBy: none
+		sourceColumn: FiscalYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarter
+		dataType: int64
+		formatString: 0
+		lineageTag: f4322d8d-c812-5609-8a40-1bb7381fcd1a
+		summarizeBy: none
+		sourceColumn: FiscalQuarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodStart
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: a707e462-6848-5246-9fd9-d773e1e6b880
+		summarizeBy: none
+		sourceColumn: PeriodStart
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column PeriodEnd
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 1bebdee7-f72b-5435-b17d-31b3eb1a4c5a
+		summarizeBy: none
+		sourceColumn: PeriodEnd
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column IsReported
+		dataType: boolean
+		lineageTag: 7d34248d-c664-5150-b538-15aa015c81a3
+		summarizeBy: none
+		sourceColumn: IsReported
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalLabel
+		dataType: string
+		lineageTag: c29c2973-eac0-5d02-bd8c-0b84850f7cff
+		summarizeBy: none
+		sourceColumn: FiscalLabel
+		sortByColumn: PeriodSort
+
+		annotation SummarizationSetBy = Automatic
+
+	column PeriodSort
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e2cf2624-04d3-5a72-8fc6-564437979199
+		summarizeBy: none
+		sourceColumn: PeriodSort
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimPeriod = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_period.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // Empty CSV cells (no gross margin, unreported quarters) become nulls before typing.
+				    Blanks = Table.TransformColumns(#"Promoted Headers", {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"PeriodKey", type text}, {"Ticker", type text}, {"FiscalYear", Int64.Type}, {"FiscalQuarter", Int64.Type}, {"PeriodStart", type date}, {"PeriodEnd", type date}, {"IsReported", type logical}, {"FiscalLabel", type text}}, "en-US"),
+				    #"Added PeriodSort" = Table.AddColumn(Typed, "PeriodSort", each [FiscalYear] * 10 + [FiscalQuarter], Int64.Type)
+				in
+				    #"Added PeriodSort"
+
+	annotation PBI_ResultType = Table
+

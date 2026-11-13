@@ -1,0 +1,62 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "summary_note",
+  "position": {
+    "x": 644,
+    "y": 500,
+    "z": 9000,
+    "height": 200,
+    "width": 612,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "How to read this",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "The driver model beats a naive same-as-last-year forecast in about 70% of company-years (13.5% vs 20.8% average miss) and runs slightly conservative: on average, revenue beat the forecast. Steady businesses (Walmart, Costco, Target, Microsoft) land within a few percent. The largest misses come from events a trend can't see: NVIDIA's AI boom, NRG buying Direct Energy, Schwab absorbing TD Ameritrade, and AMD's PC slump.",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

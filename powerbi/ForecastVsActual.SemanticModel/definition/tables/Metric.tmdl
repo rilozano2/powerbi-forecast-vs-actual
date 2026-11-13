@@ -1,0 +1,53 @@
+/// Field parameter: pick which metric the trend chart shows.
+table Metric
+	lineageTag: c2fc2d05-5c2c-5f49-96e8-1ff8272aecd0
+
+	column Metric
+		lineageTag: ff48858b-bf60-5894-a2df-b86144bb25e3
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metric Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Fields'
+		isHidden
+		lineageTag: f1b08733-66ce-5f74-94b8-5cdd05700b2f
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Metric Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Order'
+		isHidden
+		formatString: 0
+		lineageTag: ef557a6d-fedf-5f0e-9940-8c181c6e7955
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Metric = calculated
+		mode: import
+		source =
+				{
+				    ("Revenue", NAMEOF ( '_Measures'[Revenue Actual] ), 0),
+				    ("Gross profit", NAMEOF ( '_Measures'[Gross Profit Actual] ), 1),
+				    ("Operating income", NAMEOF ( '_Measures'[Operating Income Actual] ), 2),
+				    ("Net income", NAMEOF ( '_Measures'[Net Income Actual] ), 3),
+				    ("Operating margin", NAMEOF ( '_Measures'[Operating Margin (reported)] ), 4),
+				    ("Revenue TTM", NAMEOF ( '_Measures'[Revenue TTM] ), 5)
+				}
+
+	annotation PBI_Id = 5a825262bcd05b44ba3d34d162ff5669
+

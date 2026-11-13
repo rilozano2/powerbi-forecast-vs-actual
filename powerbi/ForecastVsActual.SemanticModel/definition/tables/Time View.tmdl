@@ -1,0 +1,44 @@
+/// Calculation group: show any actual measure as current, prior fiscal year, or year-over-year change.
+table 'Time View'
+	lineageTag: 5ea46d7e-468c-5d69-9d25-2343bc0da729
+
+	calculationGroup
+		precedence: 1
+
+		calculationItem Current = SELECTEDMEASURE ()
+
+		calculationItem 'Prior year' =
+				VAR yrs = SELECTCOLUMNS ( VALUES ( DimPeriod[FiscalYear] ), "y", DimPeriod[FiscalYear] - 1 )
+				VAR qs = VALUES ( DimPeriod[FiscalQuarter] )
+				RETURN
+				    CALCULATE ( SELECTEDMEASURE (), REMOVEFILTERS ( DimPeriod ), TREATAS ( yrs, DimPeriod[FiscalYear] ), qs )
+
+		calculationItem 'YoY %' =
+				VAR yrs = SELECTCOLUMNS ( VALUES ( DimPeriod[FiscalYear] ), "y", DimPeriod[FiscalYear] - 1 )
+				VAR qs = VALUES ( DimPeriod[FiscalQuarter] )
+				VAR prior =
+				    CALCULATE ( SELECTEDMEASURE (), REMOVEFILTERS ( DimPeriod ), TREATAS ( yrs, DimPeriod[FiscalYear] ), qs )
+				RETURN
+				    DIVIDE ( SELECTEDMEASURE () - prior, prior )
+
+			formatStringDefinition = "0.0%"
+
+	column 'Show as'
+		dataType: string
+		lineageTag: b1dc9d0e-04d5-57db-acec-193978063a61
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 76d87549-2946-5c06-b94c-92591bc878ea
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+

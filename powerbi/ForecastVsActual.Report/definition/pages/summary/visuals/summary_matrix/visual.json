@@ -1,0 +1,121 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "summary_matrix",
+  "position": {
+    "x": 644,
+    "y": 230,
+    "z": 8000,
+    "height": 250,
+    "width": 612,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimCompany"
+                    }
+                  },
+                  "Property": "PeerGroup"
+                }
+              },
+              "queryRef": "DimCompany.PeerGroup",
+              "active": true,
+              "displayName": "Peer group"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Revenue MAPE (company-years)"
+                }
+              },
+              "queryRef": "_Measures.Revenue MAPE (company-years)",
+              "displayName": "Avg miss"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Revenue MAPE (naive)"
+                }
+              },
+              "queryRef": "_Measures.Revenue MAPE (naive)",
+              "displayName": "Naive avg miss"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Share Within 5%"
+                }
+              },
+              "queryRef": "_Measures.Share Within 5%",
+              "displayName": "Within 5%"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Company-Years Scored"
+                }
+              },
+              "queryRef": "_Measures.Company-Years Scored",
+              "displayName": "Company-years"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'By peer group'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

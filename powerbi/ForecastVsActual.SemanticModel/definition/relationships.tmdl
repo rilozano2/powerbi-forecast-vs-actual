@@ -1,0 +1,24 @@
+relationship 4f0ac1e3-b40e-5adf-a587-5bc5c869541e
+	fromColumn: FactActuals.Ticker
+	toColumn: DimCompany.Ticker
+
+relationship 8b0f19c0-03b3-56ce-8ea4-4ef289c6f51f
+	fromColumn: FactForecast.Ticker
+	toColumn: DimCompany.Ticker
+
+relationship 3f4c5695-c425-5654-8b75-74440863f0c1
+	fromColumn: FactDrivers.Ticker
+	toColumn: DimCompany.Ticker
+
+relationship 1bce5a36-5495-5221-b7a0-28f0a80a7efa
+	fromColumn: FactActuals.PeriodKey
+	toColumn: DimPeriod.PeriodKey
+
+relationship 2a4e8970-9ee0-52c4-8756-ab356e60a8b1
+	fromColumn: FactForecast.PeriodKey
+	toColumn: DimPeriod.PeriodKey
+
+relationship 0f4a1c6b-918b-59d5-904c-71691b922186
+	fromColumn: DimPeriod.PeriodEnd
+	toColumn: Calendar.Date
+

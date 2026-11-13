@@ -1,0 +1,10 @@
+data/raw/
+__pycache__/
+.DS_Store
+*.pbix.bak
+.env
+
+# Power BI local files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+report/*.pbix.bak

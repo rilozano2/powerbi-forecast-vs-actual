@@ -1,0 +1,28 @@
+/// What-if parameter: percentage points added to the forecast operating margin.
+table 'Margin Adjustment'
+	lineageTag: db2e5db3-e041-52af-81f5-8d60df19be78
+
+	measure 'Margin Adjustment Value' = DIVIDE ( SELECTEDVALUE ( 'Margin Adjustment'[Margin Adjustment (pts)], 0 ), 100 )
+		formatString: 0.0%
+		lineageTag: 98d8c1c1-8f5b-5d1d-ba6e-2c637beca5c9
+
+	column 'Margin Adjustment (pts)'
+		dataType: double
+		formatString: 0.0
+		lineageTag: f7eed1b1-7a2c-50ba-8590-35cb76925efc
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Margin Adjustment' = calculated
+		mode: import
+		source = GENERATESERIES ( -10.0, 10.0, 0.5 )
+
+	annotation PBI_Id = b94567da9dfa5d4fb225df9df8fb506d
+

@@ -1,0 +1,178 @@
+table CheckValues
+	isHidden
+	lineageTag: 61d90d0a-4268-59c8-a923-0f9b6a878203
+
+	column Ticker
+		dataType: string
+		lineageTag: b7daa373-b2ae-504e-a774-653829df26cc
+		summarizeBy: none
+		sourceColumn: Ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vintage
+		dataType: int64
+		formatString: 0
+		lineageTag: 2084ff90-80b3-514b-b192-48ccd7ed0e5d
+		summarizeBy: none
+		sourceColumn: Vintage
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevenueVariance
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 92a34b3b-7b00-5c62-8be4-407d695a3a1b
+		summarizeBy: sum
+		sourceColumn: RevenueVariance
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevenueVariancePct
+		dataType: double
+		formatString: 0.00%
+		lineageTag: ac8cb7f4-2ad0-5868-b435-81202fb538e7
+		summarizeBy: none
+		sourceColumn: RevenueVariancePct
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingIncomeVariance
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 950366e4-0758-5cbe-879e-199813799889
+		summarizeBy: sum
+		sourceColumn: OperatingIncomeVariance
+
+		annotation SummarizationSetBy = Automatic
+
+	column BridgeRevenueEffect
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 99fcb3eb-2497-51c0-99ec-6cc47c78da8b
+		summarizeBy: sum
+		sourceColumn: BridgeRevenueEffect
+
+		annotation SummarizationSetBy = Automatic
+
+	column BridgeMarginEffect
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 9bc93779-5a15-5498-b287-a1ea180dba84
+		summarizeBy: sum
+		sourceColumn: BridgeMarginEffect
+
+		annotation SummarizationSetBy = Automatic
+
+	column BridgeGrossMarginEffect
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 0e9e4368-b50a-584e-bd45-95cd3a845619
+		summarizeBy: sum
+		sourceColumn: BridgeGrossMarginEffect
+
+		annotation SummarizationSetBy = Automatic
+
+	column BridgeOpexEffect
+		dataType: double
+		formatString: $#,0,,,.000"B"
+		lineageTag: 3cab5fd0-11e3-5edb-8fb9-61ae7bd0c908
+		summarizeBy: sum
+		sourceColumn: BridgeOpexEffect
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarters
+		dataType: string
+		lineageTag: 9463e8a1-dbc9-45b1-969d-e3e50123a5cc
+		summarizeBy: none
+		sourceColumn: Quarters
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevenueFcst
+		dataType: string
+		lineageTag: 0862cbed-44a1-40c4-bf45-6935fbb06ae9
+		summarizeBy: none
+		sourceColumn: RevenueFcst
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevenueAct
+		dataType: string
+		lineageTag: 83880a24-c91b-45f6-a0be-c6818e9d588c
+		summarizeBy: none
+		sourceColumn: RevenueAct
+
+		annotation SummarizationSetBy = Automatic
+
+	column GrossProfitFcst
+		dataType: string
+		lineageTag: 315c6630-05d1-4934-8036-fead52b5d295
+		summarizeBy: none
+		sourceColumn: GrossProfitFcst
+
+		annotation SummarizationSetBy = Automatic
+
+	column GrossProfitAct
+		dataType: string
+		lineageTag: badb7a56-c6ac-4807-81f6-92a7a17e31d0
+		summarizeBy: none
+		sourceColumn: GrossProfitAct
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpexFcst
+		dataType: string
+		lineageTag: 0df1f516-1ca8-4fff-aa21-c2a77d4f5495
+		summarizeBy: none
+		sourceColumn: OpexFcst
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpexAct
+		dataType: string
+		lineageTag: a6c4c3f1-a594-4038-af1c-812e603ee076
+		summarizeBy: none
+		sourceColumn: OpexAct
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingIncomeFcst
+		dataType: string
+		lineageTag: 0753e4ba-c677-4b23-92f3-d0bdd43e6fc2
+		summarizeBy: none
+		sourceColumn: OperatingIncomeFcst
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperatingIncomeAct
+		dataType: string
+		lineageTag: 395106ff-16fc-449c-99b9-746c93f0e596
+		summarizeBy: none
+		sourceColumn: OperatingIncomeAct
+
+		annotation SummarizationSetBy = Automatic
+
+	column HasGrossMargin
+		dataType: string
+		lineageTag: a99427c5-ba71-4211-b1cc-90a0ace65d03
+		summarizeBy: none
+		sourceColumn: HasGrossMargin
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CheckValues = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "check_values.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    // Empty CSV cells (no gross margin, unreported quarters) become nulls before typing.
+				    Blanks = Table.TransformColumns(#"Promoted Headers", {}, each if _ = "" then null else _),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"Ticker", type text}, {"Vintage", Int64.Type}, {"RevenueVariance", type number}, {"RevenueVariancePct", type number}, {"OperatingIncomeVariance", type number}, {"BridgeRevenueEffect", type number}, {"BridgeMarginEffect", type number}, {"BridgeGrossMarginEffect", type number}, {"BridgeOpexEffect", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
+

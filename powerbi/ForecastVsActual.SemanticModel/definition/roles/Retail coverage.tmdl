@@ -1,0 +1,8 @@
+/// Static row-level security demo: members only see the Retail peer group.
+role 'Retail coverage'
+	modelPermission: read
+
+	tablePermission DimCompany = 'DimCompany'[PeerGroup] == "Retail"
+
+	annotation PBI_Id = 6ca6e7d35feb48adbd1ad77cdea69d0d
+
